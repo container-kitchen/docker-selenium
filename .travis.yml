@@ -1,30 +1,20 @@
----
-sudo: required
-
 services:
-  - docker
-
+- docker
 language: bash
-
-notifications:
-    slack: seleniumhq:Kx5MB7T51SPMpbBMYfvxNW4q
-
 before_install:
-  - docker info
-  - VERSION="$TRAVIS_BRANCH" make build
-  - docker build -t test:local ./Test
-
+- docker info
+- VERSION="$TRAVIS_BRANCH" make build
+- docker build -t test:local ./Test
 script:
-  - VERSION="$TRAVIS_BRANCH" make test
-
-# only push up tags
+- VERSION="$TRAVIS_BRANCH" make test
 after_success:
-  - if [ "$TRAVIS_TAG" != "" ]; then
-    docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    VERSION="$TRAVIS_TAG" make release;
-    fi
-  - if [[ "$TRAVIS_TAG" == "$LATEST"* ]]; then
-    docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    VERSION="$TRAVIS_TAG" make tag_latest;
-    VERSION="latest" make release_latest;
-    fi
+- if [ "$TRAVIS_TAG" != "" ]; then docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME"
+  -p="$DOCKER_PASSWORD"; VERSION="$TRAVIS_TAG" make release; fi
+- if [[ "$TRAVIS_TAG" == "$LATEST"* ]]; then docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME"
+  -p="$DOCKER_PASSWORD"; VERSION="$TRAVIS_TAG" make tag_latest; VERSION="latest" make
+  release_latest; fi
+env:
+  global:
+  - secure: li4m4NG/qOMhYHge7e4YHSdVWc6zXKCl9W/pumbhTKb/WS3IS6vTGXejQuKC7EVvjWjITktav2NqI6MPaz6TlXIMf7DHNSrXQ9lN60nZBTI3O7ivzktxHnX7jSx2bJgXn9UfGLDHeNw17HN9SZ9xZa0pi7Hvr/KMTOdwOyMkA1CY0zM1OC7qB4JzrOGh96MOR7xq3HVNo04VqBjbttKbgdErJM38hYR16JN7cPmd/nDQn9yl2eEmynOBV2SdPbuvEMsINY+KhVhAyVkHfKNUnr/+V1RmoI22mVBDSJy10o8DldX3r0+W3VghXwM+QkMGz6MPdPx+sw4eEXuoqbOM+aMw70gs7DlE37cBYUzLmPVwuWdhA+MZ6b3mkWIJMPqfkpc83BFMEaaj9moKkRHFW+4KNvB9RmW4LOXN0OIEjw86TTzInM5OS96gCN6W47aFf1evf+jZ1w1GuGfK3NI9pkb+Z6+OoRY/Oa4yLTNVcrx/QM7sARItrfGXqi2ZJ34CU0ZvMsqhbiMlM67EvEP8SDGfdJqKF4ovpI+1O2aKkJAdmpRzhfr+/g5/HZkfaq/vkDF6V+P79Bel5TxbZJWeHz3rvDxb7BW85ZW75475Ljts6JUnzNrhL2eY06AilnIgZR7UPkYpx19Bihtq2QjlkBT8d3HJddNztGLYxQaNdl8=
+  - secure: WtTCicU7R+dxUDrn0NVUoaczUeL8eL0V2odrCx6wskGUYEI11KBdnU2LQB260Nfib4+xecVbCFN8xfDKLmHqjeIkT/ZBq4IuLn2g6N5MW/1NQX54FOjvfRFVJGHFvXHAZII+0B88q/tOf+ZlvSgfj4Tqk+BwrK01QOJS2xAuzKIVJnVSr0go+cAvW63mThftz4iWSab3a8TsI547ZZzIoe7snmJhIm+8lWHvcIXo32lWU+ixnZ4sEjNfSlzCR5Wy3HbgANC+UOLmK/FBmFTaKMogLxJIUdm+B8bncGz5GexJAUsuRnWSYWGGbMh+MUp86dZJtMeroFQx/RLbYie+Xk8ilOoNiscSuzBIdzDMaOeyxl5+OS+FyX8eo54wG48bYFwscxD4idJlB8NUSt0xETmoc0YZU2iteCA9J2npqQkw/arS1NGQetzMbK/0g6TxT0CVEmO9Y3YT1RKDpT9eyPlhSf3ogDBW0H/VWZ5GsN8ZUXqgzx9wLGga/jPKxuAOXRal7UZG3lXidK1VOc4hA1FBM8M4T/PPQ/K+HAZv07Up05rfCotOwTqJ4tKPDka6z36jKPeOXuxER2l3dVr80QwKQOcNTp+PlG72IU/u5lPf7CTr0p53EUMvLUqnSsuvp1IGonEjj1s7dR5YjZAMruUuVwLpPd7z/76T96t86t0=
+  - secure: FdMbz8xk3CHHB4MlCCJDzHl0dMxIid8rJ8joJpIhAGKk6f9ETfLsmKmVfoSlclVKnPDKI7/kGY9uh5xQFYGPTNFK4MbPRUpA9NMYDHkEBLZL8YEOyUvj3tFigmC0xBkWQoxxBNcmfVO4RnPRXxPC0yQCmivzs/1YxWFp0r5nzdwWfHIqSO0HTeQRnrb35u5jdqI+p+aocid2LJJthzI7jmSTqNnHxhvXgVsvIqQYVQmRVrhcRFNUwKzy3x4yy41EI9Jy/EusGHl/R2VpE35YUrn1Tf9ogGBSCTmbDYdBC8A2VXQkGdRf2aMsKFOmDBUHmZzubgcAeVdhsxe5zKWRi7cRDxy35eIgwShNapWw+ygfKxArlsKxzEH8C9CsESqwjFSM0C6t2juRjJYfJr5RLKbfXoD9iU7JObhMfo+OPAH5tJBgSyEvdpUTSWF2BRnOkDpyN/EZfOTpKl3ipJ4AN50WRttZsbZiKD/7wLnpc/pmlS8tXOThoPzLP4/YdSQEaVJ11OIvmpg1RjAjtcefMCwv8M9uOODMKS5LXP11HBEi64Opb84wJZcPmG6MYmbg5rYy/ugILLWTTBed0hqIjECI9g6XiLRXStx3M+nGnuzROlMzPt6rKw5kyr1XTSSwyMfj+kTYJEUVciiAJnGL51kKAc1qL4vGVJqCQUibp0g=
